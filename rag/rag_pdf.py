@@ -10,14 +10,14 @@ from langchain_sambanova import ChatSambaNovaCloud
 
 class RAGPDF:
     def __init__(self, pdf_path: str):
-        """تهيئة الكلاس مع مسار ملف PDF ونموذج اللغة"""
+        """Initialize the class with the PDF file path and the language model."""
         self.pdf_path = pdf_path
-        self.chunks = []  # لتخزين أجزاء النص
-        self.embeddings = []  # لتخزين التمثيل العددي للنصوص
-        self.index = None  # فهرس FAISS للبحث
-        self.model = SentenceTransformer("all-MiniLM-L6-v2")  # نموذج تحويل النصوص إلى أرقام
-        
-        # تحميل متغيرات البيئة وتهيئة نموذج سامبانوفا
+        self.chunks = []        # To store text chunks
+        self.embeddings = []    # To store numerical representations of text
+        self.index = None       # FAISS index for similarity search
+        self.model = SentenceTransformer("all-MiniLM-L6-v2")  # Text embedding model
+
+        # Load environment variables and initialize the SambaNova model
         load_dotenv()
         self.llm = ChatSambaNovaCloud(
             model="Meta-Llama-3.3-70B-Instruct",
@@ -28,7 +28,7 @@ class RAGPDF:
         )
 
     def load_pdf(self) -> str:
-        """تحميل محتوى ملف PDF وإرجاعه كنص"""
+        """Load the content of the PDF file and return it as a string."""
         with open(self.pdf_path, 'rb') as file:
             reader = PyPDF2.PdfReader(file)
             text = ""
@@ -37,7 +37,7 @@ class RAGPDF:
         return text
 
     def split_text(self, text: str, max_chunk_size: int = 300):
-        """تقسيم النص إلى أجزاء صغيرة لمعالجتها"""
+        """Split the text into smaller chunks for easier processing."""
         words = text.split()
         chunk = []
         for word in words:
@@ -49,20 +49,20 @@ class RAGPDF:
             self.chunks.append(' '.join(chunk))
 
     def create_embeddings(self):
-        """إنشاء تمثيل عددي للنصوص وحفظها في فهرس FAISS"""
+        """Generate vector embeddings for the text chunks and build the FAISS index."""
         self.embeddings = self.model.encode(self.chunks, convert_to_numpy=True)
-        dimension = self.embeddings.shape[1]  
+        dimension = self.embeddings.shape[1]
         self.index = faiss.IndexFlatL2(dimension)
         self.index.add(self.embeddings)
 
     def search(self, query: str, top_k: int = 3) -> List[str]:
-        """البحث عن الأجزاء الأكثر صلة بالسؤال"""
+        """Search for the most relevant chunks based on the query."""
         query_embedding = self.model.encode([query], convert_to_numpy=True)
         distances, indices = self.index.search(query_embedding, top_k)
         return [self.chunks[i] for i in indices[0]]
 
     def generate_answer(self, query: str) -> str:
-        """إنشاء إجابة باستخدام الأجزاء الأكثر صلة"""
+        """Generate an answer using the most relevant chunks as context."""
         relevant_chunks = self.search(query)
         context = "\n".join(relevant_chunks)
         prompt = f"""Answer the following question using the context below:
@@ -73,10 +73,10 @@ class RAGPDF:
         Question: {query}
         
         Answer:"""
-        
-        response = self.llm.invoke(prompt)  # استخدام invoke بدلاً من generate
-        
-        # معالجة الاستجابة للحصول على النص
+
+        response = self.llm.invoke(prompt)  # Use invoke instead of generate
+
+        # Process the response and extract the text
         if hasattr(response, 'content'):
             return response.content
         elif hasattr(response, 'generations'):
@@ -86,26 +86,26 @@ class RAGPDF:
 
 if __name__ == "__main__":
     print("=== Running RAGPDF test ===")
-    
-    # المسار إلى ملف PDF (تغييره لملفك الخاص)
+
+    # Path to the PDF file (replace with your own file)
     pdf_path = "../data/ancient_egypt_data.pdf"
-    
+
     rag = RAGPDF(pdf_path)
-    
+
     try:
-        # 1. تحميل PDF
+        # 1. Load the PDF
         text = rag.load_pdf()
         print(f"[✓] Loaded PDF with {len(text)} characters.")
 
-        # 2. تقسيم النص
+        # 2. Split the text into chunks
         rag.split_text(text)
         print(f"[✓] Split text into {len(rag.chunks)} chunks.")
 
-        # 3. إنشاء تمثيل عددي
+        # 3. Create vector embeddings
         rag.create_embeddings()
         print(f"[✓] Created FAISS index with {len(rag.embeddings)} embeddings.")
 
-        # 4. طرح سؤال والحصول على إجابة
+        # 4. Ask a question and get an answer
         question = "Tell me about Ramesses III"
         answer = rag.generate_answer(question)
         print(f"[✓] Answer:\n{answer}")

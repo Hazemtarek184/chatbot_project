@@ -36,23 +36,23 @@ try:
         raise RuntimeError("PDF data file not found!")
     
     qa_system = QAAgent(pdf_path)
-    print("🔮 QA System initialized successfully!")
+    print(" QA System initialized successfully!")
 except Exception as e:
-    print(f"⚠️ Failed to initialize QA System: {e}")
+    print(f" Failed to initialize QA System: {e}")
     qa_system = None
 
 
 @app.get("/welcome")
 def display_welcome():
     welcome_message = {
-        "title": "👁️  Eye of Horus - Ancient Egypt Expert System  👁️",
-        "intro": "Welcome to our little project! ✨",
+        "title": " Eye of Horus - Ancient Egypt Expert System  ",
+        "intro": "Welcome to our little project! ",
         "description": "I'm here to help you explore the wonders of Ancient Egypt.",
         "topics": "Ask me anything about pharaohs, temples, mummies, or lost secrets!",
         "commands": {
-            "ask": "💬 Type your question to begin.",
-            "clear": "🔁 Type 'clear' to clear the screen.",
-            "exit": "❌ Type 'exit' to quit the program."
+            "ask": " Type your question to begin.",
+            "clear": " Type 'clear' to clear the screen.",
+            "exit": " Type 'exit' to quit the program."
         }
     }
     return welcome_message

@@ -37,7 +37,7 @@ class PharaohExpert:
             "politics": "{name} political achievements",
             "religion": "{name} religious reforms",
             "military": "{name} military campaigns",
-            "legacy": "{name} legacy historical impact"  # أضفت هذا المفتاح المفقود
+            "legacy": "{name} legacy historical impact" 
         }
 
     def get_pharaoh_info(self, name: str) -> Tuple[str, str, str]:
@@ -67,19 +67,19 @@ class PharaohExpert:
         """Generate one detailed answer focusing on specific aspects"""
         paragraphs = []
         
-        # مقدمة عن الفرعون
+        # Introduction to the Pharaoh
         intro = self._get_pharaoh_intro(name)
         paragraphs.append(intro)
         
-        # معلومات عن الجوانب المطلوبة
+        # Information on required aspects
         for aspect in focus_aspects:
-            if aspect in self.aspects:  # تأكيد وجود المفتاح
+            if aspect in self.aspects:  # Confirm the key exists
                 query = self.aspects[aspect].format(name=name)
                 info = self._get_detailed_info(query)
                 if info:
                     paragraphs.append(info)
         
-        # إذا كانت الإجابة قصيرة، نضيف المزيد من المعلومات
+        # If answer is short, we add more information
         while len(paragraphs) < 4:
             remaining_aspects = [a for a in self.aspects if a not in focus_aspects]
             if remaining_aspects:
@@ -91,7 +91,7 @@ class PharaohExpert:
             else:
                 break
         
-        # تجميع الفقرات في إجابة واحدة
+        # Group paragraphs into one answer
         answer = ' '.join(paragraphs)
         return self._ensure_proper_length(answer)
 
@@ -140,16 +140,16 @@ class PharaohExpert:
         sentences = [s.strip() for s in re.split(r'[.!?]', text) if s.strip()]
         
         if len(sentences) < 7:
-            # إضافة جمل إضافية إذا كانت الإجابة قصيرة
+            # Add extra sentences if answer is short
             extra_query = random.choice(list(self.aspects.values())).format(name="Hatshepsut")
             extra_info = self._get_detailed_info(extra_query)
             if extra_info:
                 extra_sentences = [s.strip() for s in re.split(r'[.!?]', extra_info) if s.strip()]
                 sentences.extend(extra_sentences[:3])
         
-        sentences = sentences[:12]  # اقتصار على 12 جملة كحد أقصى
+        sentences = sentences[:12]  #Limit to 12 sentences maximum
         
-        # تنسيق الجمل
+        # Formatting sentences
         sentences = [s[0].upper() + s[1:] if s else s for s in sentences]
         answer = '. '.join(sentences) + '.' if sentences else ""
         
@@ -186,15 +186,3 @@ class PharaohExpert:
         """Check if URL is from a trusted site"""
         url = url.lower()
         return any(source in url for source in self.trusted_sites)
-
-
-# if __name__ == "__main__":
-#     expert = PharaohExpert()
-#     answer1, answer2, answer3 = expert.get_pharaoh_info("Hatshepsut")
-    
-#     print("==== first answer====")
-#     print(answer1)
-#     print("\n==== second answer====")
-#     print(answer2)
-#     print("\n==== third answer====")
-#     print(answer3)

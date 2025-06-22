@@ -44,16 +44,21 @@ class QAAgent:
         # 1. Get PDF answer
         pdf_answer = self.rag.generate_answer(question)
         
-        # 2. Get web answers (always returns 3 answers)
-        web_answers = self.web_searcher.get_pharaoh_info(question)
+        # 2. If PDF answer found → return it only
+        if pdf_answer:
+            return (pdf_answer, None, None)
         
-        # Format responses based on language
+        # 3. Else → Get web answers
+        web_answers = self.web_searcher.get_pharaoh_info(question)
         if lang == 'ar':
-            pdf_answer = pdf_answer or "لا توجد إجابة في المستند"
-            return (pdf_answer, *web_answers[:2])
+            fallback = "لا توجد إجابة في المستند ولكن تم العثور على نتائج من الإنترنت"
         else:
-            pdf_answer = pdf_answer or "No answer found in document"
-            return (pdf_answer, *web_answers[:2])
+            fallback = "No answer found in document, but found results from the web"
+
+        web1 = web_answers[0] if len(web_answers) > 0 else ""
+        web2 = web_answers[1] if len(web_answers) > 1 else ""
+
+        return (fallback, web1, web2)
 
     def interactive_test(self):
         """Interactive testing mode"""
