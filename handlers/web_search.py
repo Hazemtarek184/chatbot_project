@@ -9,7 +9,7 @@ load_dotenv()
 
 class PharaohExpert:
     def __init__(self):
-        self.api_key = os.getenv("SERPER_API_KEY")
+        self.api_key = "ad0500da85ec0e8691999121e5cb218e2ac3f7f6"
         if not self.api_key:
             raise ValueError("Add SERPER_API_KEY to .env file")
         

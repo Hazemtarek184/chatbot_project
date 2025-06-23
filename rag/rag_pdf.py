@@ -24,7 +24,7 @@ class RAGPDF:
             max_tokens=1024,
             temperature=0.7,
             top_p=0.01,
-            api_key=os.getenv("SAMBANOVA_API_KEY"),
+            api_key="cc62771b-14e7-4f8e-a2b5-357297a2326e",
         )
 
     def load_pdf(self) -> str:
