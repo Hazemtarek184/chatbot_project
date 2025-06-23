@@ -12,4 +12,6 @@ COPY handlers/ ./handlers/
 COPY rag/ ./rag/
 COPY data/ ./data/
 
+RUN ls -l /app/data || echo "No data directory found"
+
 CMD ["python", "main.py"] 
