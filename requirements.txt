@@ -1,3 +1,9 @@
+# Force CPU-only torch to avoid pulling in CUDA/NVIDIA dependencies
+torch==2.1.0+cpu
+torchvision==0.16.0+cpu
+torchaudio==2.1.0+cpu
+-f https://download.pytorch.org/whl/torch_stable.html
+
 faiss-cpu
 sentence-transformers
 PyPDF2
@@ -12,5 +18,5 @@ pytest>=7.0.0
 mypy>=0.950
 black>=22.0.0
 language-tool-python
-fastapi 
+fastapi
 uvicorn
