@@ -31,7 +31,8 @@ class AnswerResponse(BaseModel):
 # Initialize QA System
 try:
     from agents.qa_agent import QAAgent
-    pdf_path = os.path.join("data", "ancient_egypt_data.pdf")
+    print("Current working directory:", os.getcwd())
+    pdf_path = os.path.join(os.path.dirname(__file__), "data", "ancient_egypt_data.pdf")
     print("Does data/ exist?", os.path.isdir("data"))
     print("Does data/ancient_egypt_data.pdf exist?", os.path.isfile("data/ancient_egypt_data.pdf"))
     if not os.path.exists(pdf_path):
