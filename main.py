@@ -40,7 +40,7 @@ pdf_path = os.path.join(os.path.dirname(__file__), "data", "ancient_egypt_data.p
 print("Absolute PDF path:", pdf_path)
 print("PDF exists at path:", os.path.isfile(pdf_path))
 
-print("SAMBANOVA_API_KEY from environment:", os.environ.get("SAMBANOVA_API_KEY"))
+print("SAMBANOVA_API_KEY from environment:", os.environ.get("SAMBANOVA_API_KEY"), flush=True)
 
 try:
     from agents.qa_agent import QAAgent
