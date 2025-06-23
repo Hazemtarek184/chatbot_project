@@ -123,11 +123,19 @@ async def ask_question(request: QuestionRequest):
 @app.get("/api/health")
 async def health_check():
     """Check API status"""
-    return {
-        "status": "ready" if qa_system else "degraded",
-        "service": "Eye of Horus API",
-        "version": "1.0.0"
-    }
+    try:
+        status = "ready" if qa_system else "degraded"
+        return {
+            "status": status,
+            "service": "Eye of Horus API",
+            "version": "1.0.0"
+        }
+    except Exception as e:
+        print(f"Health check error: {e}", flush=True)
+        return {
+            "status": "error",
+            "error": str(e)
+        }
 
 @app.get("/", include_in_schema=False)
 async def welcome():
