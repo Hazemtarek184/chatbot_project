@@ -29,19 +29,25 @@ class AnswerResponse(BaseModel):
     status: str
 
 # Initialize QA System
+print("Current working directory:", os.getcwd())
+print("List of files in /app:", os.listdir("/app"))
+if os.path.isdir("/app/data"):
+    print("List of files in /app/data:", os.listdir("/app/data"))
+else:
+    print("/app/data directory does not exist")
+
+pdf_path = os.path.join(os.path.dirname(__file__), "data", "ancient_egypt_data.pdf")
+print("Absolute PDF path:", pdf_path)
+print("PDF exists at path:", os.path.isfile(pdf_path))
+
 try:
     from agents.qa_agent import QAAgent
-    print("Current working directory:", os.getcwd())
-    pdf_path = os.path.join(os.path.dirname(__file__), "data", "ancient_egypt_data.pdf")
-    print("Does data/ exist?", os.path.isdir("data"))
-    print("Does data/ancient_egypt_data.pdf exist?", os.path.isfile("data/ancient_egypt_data.pdf"))
     if not os.path.exists(pdf_path):
         raise RuntimeError("PDF data file not found!")
-    
     qa_system = QAAgent(pdf_path)
-    print(" QA System initialized successfully!")
+    print("QA System initialized successfully!")
 except Exception as e:
-    print(f" Failed to initialize QA System: {e}")
+    print(f"Failed to initialize QA System: {e}")
     qa_system = None
 
 
